@@ -38,7 +38,7 @@ app = web.application(urls, globals())
 class list_sensors:        
     def GET(self):
         output = 'sensors:[';
-        for sensor, pin in DHT_SENSORS,items():
+        for sensor, pin in DHT_SENSORS.items():
                 humidity, temp = Adafruit_DHT.read(DHT_TYPE, pin)
                 logging.info('Sensor:' + sensor)
                 logging.info('Temperature: {0:0.1f} C'.format(temp))
