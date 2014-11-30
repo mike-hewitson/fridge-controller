@@ -61,7 +61,6 @@ if __name__ == "__main__":
     # can't be reliably read (timing is critical to read the sensor).
     if humidity_ambient is None or temp_ambient is None:
         time.sleep(2)
-        continue
 
     # Attempt to get sensor reading.
     humidity_curing, temp_curing = Adafruit_DHT.read(DHT_TYPE, DHT_PIN_CURING)
@@ -71,7 +70,6 @@ if __name__ == "__main__":
     # can't be reliably read (timing is critical to read the sensor).
     if humidity_curing is None or temp_curing is None:
         time.sleep(2)
-        continue
 
     # Attempt to get sensor reading.
     humidity_fridge, temp_fridge = Adafruit_DHT.read(DHT_TYPE, DHT_PIN_FRIDGE)
@@ -81,8 +79,7 @@ if __name__ == "__main__":
     # can't be reliably read (timing is critical to read the sensor).
     if humidity_fridge is None or temp_fridge is None:
         time.sleep(2)
-        continue
-
+ 
 #   print str(datetime.datetime.now())
     logging.info('Temperature: {0:0.1f} C'.format(temp_ambient))
     logging.info('Humidity:    {0:0.1f} %'.format(humidity_ambient))
