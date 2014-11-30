@@ -1,5 +1,5 @@
 <sensors>
-    <sensor id="Room" temp=25.0 humidity=55/>
-    <sensor id="Fridge" temp=5.0 humidity=10.0/>
-    <sensor id="Chamber" temp=12.5 humidity=80/>
+    <sensor id="Room" temp="25.0" humidity="55"/>
+    <sensor id="Fridge" temp="5.0" humidity="10.0"/>
+    <sensor id="Chamber" temp="12.5" humidity="80"/>
 </sensors>
