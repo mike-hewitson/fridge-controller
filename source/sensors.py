@@ -16,7 +16,7 @@ DHT_PIN_AMBIENT  = 4
 DHT_PIN_CURING  = 25
 DHT_PIN_FRIDGE  = 24
 LOGFILE_NAME = 'RestService.log'
-DHT_SENSORS = {"Fridge":DHT_PIN_FRIDGE, "Ambient":DHT_PIN_AMBIENT, "Curing":DHT_PIN_CURING}
+DHT_SENSORS = {"Fridge": DHT_PIN_FRIDGE, "Ambient": DHT_PIN_AMBIENT, "Curing": DHT_PIN_CURING}
 
 logging.basicConfig(filename=LOGFILE_NAME, level=logging.DEBUG, format='%(asctime)s %(levelname)s:%(message)s')
 logging.info('Starting up..')
@@ -26,6 +26,7 @@ root = tree.getroot()
 
 print tree
 print root
+DHT_SENSORS
 
 urls = (
     '/sensors', 'list_sensors',
@@ -37,17 +38,21 @@ app = web.application(urls, globals())
 class list_sensors:        
     def GET(self):
         output = 'sensors:[';
-        for child in root:
-                print 'child', child.tag, child.attrib
-                output += str(child.attrib) + ','
+        for sensor, pin in DHT_SENSORS,items():
+                humidity, temp = Adafruit_DHT.read(DHT_TYPE, pin)
+                logging.info('Sensor:' + sensor)
+                logging.info('Temperature: {0:0.1f} C'.format(temp))
+                logging.info('Humidity:    {0:0.1f} %'.format(ambient))
+                print 'sensor', sensor, datetime.datetime.now()
+                output += "{'sensor': '" + Sensor + "'temp': '" + str(temp) + "'},"
         output += ']';
         return output
 
 class get_sensor:
     def GET(self, sensor):
-        for child in root:
+        for sensor in DHT_SENSORS:
                 if child.attrib['id'] == sensor:
-                    return str(child.attrib)
+                    return str("bob")
 
 if __name__ == "__main__":
     app.run()
