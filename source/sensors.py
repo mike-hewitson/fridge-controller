@@ -33,14 +33,12 @@ class list_sensors:
     def GET(self):
         output = 'sensors:[';
         for sensor, pin in DHT_SENSORS.items():
-            logging.info('List - Sensor:' + sensor + ' Pin; ' + str(pin) 
+            logging.info('List - Sensor:' + sensor + ' Pin; ' + str(pin))
             humidity, temp = Adafruit_DHT.read(DHT_TYPE, pin)
             if humidity is None or temp is None:
                 logging.info('Data not returned') 
                 time.sleep(2)
-
             print 'sensor', sensor, datetime.datetime.now(), temp, humidity
-            logging.info('List - Sensor:' + sensor + ' Pin; ' + str(pin)
             logging.info('List - Temperature: {0:0.1f} C'.format(temp))
             logging.info('List - Humidity:    {0:0.1f} %'.format(ambient))
             output += "{'sensor': '" + Sensor + "'temp': '" + str(temp) + "'},"
