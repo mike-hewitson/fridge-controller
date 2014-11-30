@@ -5,7 +5,6 @@ import sys
 import time
 import datetime
 import logging
-
 import Adafruit_DHT
 
 # Type of sensor, can be Adafruit_DHT.DHT11, Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
@@ -21,12 +20,7 @@ DHT_SENSORS = {"Fridge": DHT_PIN_FRIDGE, "Ambient": DHT_PIN_AMBIENT, "Curing": D
 logging.basicConfig(filename=LOGFILE_NAME, level=logging.DEBUG, format='%(asctime)s %(levelname)s:%(message)s')
 logging.info('Starting up..')
 
-tree = ET.parse('user_data.xml')
-root = tree.getroot()
-
-print tree
-print root
-DHT_SENSORS
+print DHT_SENSORS
 
 urls = (
     '/sensors', 'list_sensors',
@@ -39,58 +33,26 @@ class list_sensors:
     def GET(self):
         output = 'sensors:[';
         for sensor, pin in DHT_SENSORS.items():
-                humidity, temp = Adafruit_DHT.read(DHT_TYPE, pin)
-                logging.info('Sensor:' + sensor)
-                logging.info('Temperature: {0:0.1f} C'.format(temp))
-                logging.info('Humidity:    {0:0.1f} %'.format(ambient))
-                print 'sensor', sensor, datetime.datetime.now()
-                output += "{'sensor': '" + Sensor + "'temp': '" + str(temp) + "'},"
+            logging.info('List - Sensor:' + sensor + ' Pin; ' + str(pin) 
+            humidity, temp = Adafruit_DHT.read(DHT_TYPE, pin)
+            if humidity is None or temp is None:
+                logging.info('Data not returned') 
+                time.sleep(2)
+
+            print 'sensor', sensor, datetime.datetime.now(), temp, humidity
+            logging.info('List - Sensor:' + sensor + ' Pin; ' + str(pin)
+            logging.info('List - Temperature: {0:0.1f} C'.format(temp))
+            logging.info('List - Humidity:    {0:0.1f} %'.format(ambient))
+            output += "{'sensor': '" + Sensor + "'temp': '" + str(temp) + "'},"
         output += ']';
         return output
 
 class get_sensor:
     def GET(self, sensor):
         for sensor in DHT_SENSORS:
-                if child.attrib['id'] == sensor:
-                    return str("bob")
+            if child.attrib['id'] == sensor:
+                return str("bob")
 
 if __name__ == "__main__":
     app.run()
-
-
-    # Attempt to get sensor reading.
-    humidity_ambient, temp_ambient = Adafruit_DHT.read(DHT_TYPE, DHT_PIN_AMBIENT)
-
-    # Skip to the next reading if a valid measurement couldn't be taken.
-    # This might happen if the CPU is under a lot of load and the sensor
-    # can't be reliably read (timing is critical to read the sensor).
-    if humidity_ambient is None or temp_ambient is None:
-        time.sleep(2)
-
-    # Attempt to get sensor reading.
-    humidity_curing, temp_curing = Adafruit_DHT.read(DHT_TYPE, DHT_PIN_CURING)
-
-    # Skip to the next reading if a valid measurement couldn't be taken.
-    # This might happen if the CPU is under a lot of load and the sensor
-    # can't be reliably read (timing is critical to read the sensor).
-    if humidity_curing is None or temp_curing is None:
-        time.sleep(2)
-
-    # Attempt to get sensor reading.
-    humidity_fridge, temp_fridge = Adafruit_DHT.read(DHT_TYPE, DHT_PIN_FRIDGE)
-
-    # Skip to the next reading if a valid measurement couldn't be taken.
-    # This might happen if the CPU is under a lot of load and the sensor
-    # can't be reliably read (timing is critical to read the sensor).
-    if humidity_fridge is None or temp_fridge is None:
-        time.sleep(2)
- 
-#   print str(datetime.datetime.now())
-    logging.info('Temperature: {0:0.1f} C'.format(temp_ambient))
-    logging.info('Humidity:    {0:0.1f} %'.format(humidity_ambient))
-    logging.info('Temperature: {0:0.1f} C'.format(temp_curing))
-    logging.info('Humidity:    {0:0.1f} %'.format(humidity_curing))
-    logging.info('Temperature: {0:0.1f} C'.format(temp_fridge))
-    logging.info('Humidity:    {0:0.1f} %'.format(humidity_fridge))
- 
 
