@@ -46,9 +46,7 @@ DHT_PIN_FRIDGE  = 24
 # Example of sensor connected to Beaglebone Black pin P8_11
 #DHT_PIN  = 'P8_11'
 
-# Google Docs account email, password, and spreadsheet name.
-#GDOCS_EMAIL            	= 'hewitson.is.me@gmail.com'
-#GDOCS_PASSWORD         	= 'mjh590526'
+# Google Docs account stuff and spreadsheet name.
 GDOCS_SPREADSHEET_NAME 	= 'DHTHumidityLogs'
 LOGFILE_NAME		= 'Humiditylog.log'
 GDOCS_OAUTH_JSON       	= 'bobbob-62fd32a66a6f.json'
@@ -60,30 +58,22 @@ FREQUENCY_SECONDS      = 600
 logging.basicConfig(filename=LOGFILE_NAME, level=logging.DEBUG, format='%(asctime)s %(levelname)s:%(message)s')
 logging.info('Starting up..')
  
-
-
-#def login_open_sheet(email, password, spreadsheet):
 def login_open_sheet(oauth_key_file, spreadsheet):
 	while True:
 		"""Connect to Google Docs spreadsheet and return the first worksheet."""
 		try:
 			json_key = json.load(open(oauth_key_file))
-			print json_key
 			credentials = SignedJwtAssertionCredentials(json_key['client_email'], 
 				json_key['private_key'], 
 				['https://spreadsheets.google.com/feeds'])
 			gc = gspread.authorize(credentials)
-#			gc = gspread.login(email, password)
 			worksheet = gc.open(spreadsheet).sheet1
 			return worksheet
 
-
 		except Exception as ex:
 			logging.warning('Unable to login and get spreadsheet.  Check email, password, spreadsheet name.')
-
 			print('Google sheet failed with error:',ex)
 			time.sleep(300)
-
 
 print 'Logging sensor measurements to {0} every {1} seconds.'.format(GDOCS_SPREADSHEET_NAME, FREQUENCY_SECONDS)
 print 'Press Ctrl-C to quit.'
@@ -92,7 +82,6 @@ while True:
 	# Login if necessary.
 	if worksheet is None:
 		worksheet = login_open_sheet(GDOCS_OAUTH_JSON, GDOCS_SPREADSHEET_NAME)
-#		worksheet = login_open_sheet(GDOCS_EMAIL, GDOCS_PASSWORD, GDOCS_SPREADSHEET_NAME)
 
 	# Attempt to get sensor reading.
 	humidity_ambient, temp_ambient = Adafruit_DHT.read(DHT_TYPE, DHT_PIN_AMBIENT)
@@ -124,7 +113,7 @@ while True:
 		time.sleep(2)
 		continue
 
-#	print str(datetime.datetime.now())
+	# print str(datetime.datetime.now())
 	logging.info('Temperature: {0:0.1f} C'.format(temp_ambient))
 	logging.info('Humidity:    {0:0.1f} %'.format(humidity_ambient))
 	logging.info('Temperature: {0:0.1f} C'.format(temp_curing))
