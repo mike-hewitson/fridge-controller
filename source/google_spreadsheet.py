@@ -26,6 +26,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import json
 import sys
 import time
 import datetime
@@ -33,6 +34,7 @@ import logging
 
 import Adafruit_DHT
 import gspread
+from oauth2client.client import SignedJwtAssertionCredentials
 
 # Type of sensor, can be Adafruit_DHT.DHT11, Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
 DHT_TYPE = Adafruit_DHT.DHT22
@@ -45,10 +47,12 @@ DHT_PIN_FRIDGE  = 24
 #DHT_PIN  = 'P8_11'
 
 # Google Docs account email, password, and spreadsheet name.
-GDOCS_EMAIL            = 'hewitson.is.me@gmail.com'
-GDOCS_PASSWORD         = 'mjh590526'
-GDOCS_SPREADSHEET_NAME = 'DHTHumidityLogs'
-LOGFILE_NAME = 'Humiditylog.log'
+#GDOCS_EMAIL            	= 'hewitson.is.me@gmail.com'
+#GDOCS_PASSWORD         	= 'mjh590526'
+GDOCS_SPREADSHEET_NAME 	= 'DHTHumidityLogs'
+LOGFILE_NAME		= 'Humiditylog.log'
+GDOCS_OAUTH_JSON       	= 'bobbob-62fd32a66a6f.json'
+
 
 # How long to wait (in seconds) between measurements.
 FREQUENCY_SECONDS      = 600
@@ -58,15 +62,26 @@ logging.info('Starting up..')
  
 
 
-def login_open_sheet(email, password, spreadsheet):
+#def login_open_sheet(email, password, spreadsheet):
+def login_open_sheet(oauth_key_file, spreadsheet):
 	while True:
 		"""Connect to Google Docs spreadsheet and return the first worksheet."""
 		try:
-			gc = gspread.login(email, password)
-			worksheet = gc.open(spreadsheet).sheet1#
+			json_key = json.load(open(oauth_key_file))
+			print json_key
+			credentials = SignedJwtAssertionCredentials(json_key['client_email'], 
+				json_key['private_key'], 
+				['https://spreadsheets.google.com/feeds'])
+			gc = gspread.authorize(credentials)
+#			gc = gspread.login(email, password)
+			worksheet = gc.open(spreadsheet).sheet1
 			return worksheet
-		except:
+
+
+		except Exception as ex:
 			logging.warning('Unable to login and get spreadsheet.  Check email, password, spreadsheet name.')
+
+			print('Google sheet failed with error:',ex)
 			time.sleep(300)
 
 
@@ -76,7 +91,8 @@ worksheet = None
 while True:
 	# Login if necessary.
 	if worksheet is None:
-		worksheet = login_open_sheet(GDOCS_EMAIL, GDOCS_PASSWORD, GDOCS_SPREADSHEET_NAME)
+		worksheet = login_open_sheet(GDOCS_OAUTH_JSON, GDOCS_SPREADSHEET_NAME)
+#		worksheet = login_open_sheet(GDOCS_EMAIL, GDOCS_PASSWORD, GDOCS_SPREADSHEET_NAME)
 
 	# Attempt to get sensor reading.
 	humidity_ambient, temp_ambient = Adafruit_DHT.read(DHT_TYPE, DHT_PIN_AMBIENT)
