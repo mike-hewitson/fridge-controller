@@ -1,0 +1,68 @@
+---
+- hosts: all
+  remote_user: root
+  sudo: yes
+
+  tasks:
+    - name: Update apt
+      apt: update_cache=yes
+
+    - name: Upgrade all of the installed components
+      apt: upgrade=dist
+
+    - name: Install raspi-config
+      apt: name=raspi-config state=present
+
+    - name: Install fish
+      apt: name=fish state=present
+
+    - name: Install nano editor
+      apt: name=nano state=present
+
+    - name: Install git
+      apt: name=git-core state=present
+
+    - name: Install build essentials
+      apt: name=build-essential state=present
+
+    - name: Install python development tools
+      apt: name=python-dev state=present
+
+    - name: Install python virtual environment
+      apt: name=python-virtualenv state=present
+
+    - name: Create working directory
+      file: path=/var/working state=directory
+
+    - name: Create python virtual environment
+      command: virtualenv venv
+      args:
+        chdir: /var/working/
+
+    - name: Activate working env
+      command: . venv/bin/activate
+      args:
+        chdir: /var/working/
+
+    - name: Install GPIO library
+      command: pip install rpi-gpio
+      args:
+        chdir: /var/working/
+
+    - name: Clone the DHT library
+      git: repo=https://github.com/adafruit/Adafruit_Python_DHT.git
+            dest=/var/working/
+
+
+
+    #     creates: /var/working/
+
+    # - name: Create working directory
+    #   command: mkdir working
+    #   args:
+    #     chdir: /var/
+    #     creates: /var/working/
+
+    # - name: Install python-apt
+    #   raw: apt-get install python-apt -y
+
