@@ -183,7 +183,7 @@ def to_plotly():
 	data = Data([temp, hum])
 
 	layout = Layout(
-					title="Temperature and humidity in Peter's lab",
+					title="Temperature and humidity in Mike's storeroom",
 				    xaxis=XAxis(
 				        type='date',
 				        autorange=True
