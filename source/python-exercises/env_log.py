@@ -1,6 +1,13 @@
 import sqlite3
 import sys
 import Adafruit_DHT
+import logging
+
+LOGFILE_NAME		= '/etc/log/sensor.log'
+
+logging.basicConfig(filename=LOGFILE_NAME, level=logging.DEBUG, format='%(asctime)s %(levelname)s:%(message)s')
+logging.info('Recording started')
+
 
 def log_values(sensor_id, temp, hum):
 	conn=sqlite3.connect('/var/www/lab_app/lab_app.db')  #It is important to provide an
@@ -16,13 +23,21 @@ def log_values(sensor_id, temp, hum):
 	conn.close()
 
 humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 4)
-# If you don't have a sensor but still wish to run this program, comment out all the 
-# sensor related lines, and uncomment the following lines (these will produce random
-# numbers for the temperature and humidity variables):
-# import random
-# humidity = random.randint(1,100)
-# temperature = random.randint(10,30)
 if humidity is not None and temperature is not None:
-	log_values("1", temperature, humidity)	
+	log_values("Ambient", temperature, humidity)	
 else:
-	log_values("1", -999, -999)
+	logging.warning('Sensor {0} reading failed.'.format('Ambient'))
+
+humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 24)
+if humidity is not None and temperature is not None:
+	log_values("Fridge", temperature, humidity)	
+else:
+	logging.warning('Sensor {0} reading failed.'.format('Fridge'))
+
+humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 25)
+if humidity is not None and temperature is not None:
+	log_values("Curing", temperature, humidity)	
+else:
+	logging.warning('Sensor {0} reading failed.'.format('Curing'))
+
+logging.info('Recording ended')
