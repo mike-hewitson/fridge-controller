@@ -25,11 +25,7 @@ def lab_temp():
     ambient_humidity, ambient_temperature = Adafruit_DHT.read_retry(
         Adafruit_DHT.DHT22, 4)
 
-    if ambient_humidity is not None and ambient_temperature is not None:
-        return render_template("lab_temp.html",
-                               ambient_temp=ambient_temperature,
-                               ambient_hum=ambient_humidity)
-    else:
+    if ambient_humidity is None or ambient_temperature is None:
         logging.warning(
             'Sensor {0} reading failed (from /lab_temp).'.format('Ambient'))
         return render_template("no_sensor.html")
@@ -37,10 +33,7 @@ def lab_temp():
     fridge_humidity, fridge_temperature = Adafruit_DHT.read_retry(
         Adafruit_DHT.DHT22, 24)
 
-    if fridge_humidity is not None and fridge_temperature is not None:
-        return render_template("lab_temp.html", fridge_temp=fridge_temperature,
-                               fridge_hum=fridge_humidity)
-    else:
+    if fridge_humidity is None or fridge_temperature is None:
         logging.warning(
             'Sensor {0} reading failed (from /lab_temp).'.format('Fridge'))
         return render_template("no_sensor.html")
@@ -48,13 +41,18 @@ def lab_temp():
     curing_humidity, curing_temperature = Adafruit_DHT.read_retry(
         Adafruit_DHT.DHT22, 25)
 
-    if curing_humidity is not None and curing_temperature is not None:
-        return render_template("lab_temp.html", curing_temp=curing_temperature,
-                               curing_hum=curing_humidity)
-    else:
+    if curing_humidity is None or curing_temperature is None:
         logging.warning(
             'Sensor {0} reading failed (from /lab_temp).'.format('Curing'))
         return render_template("no_sensor.html")
+
+    return render_template("lab_temp.html",
+                           ambient_temp=ambient_temperature,
+                           ambient_hum=ambient_humidity,
+                           fridge_temp=fridge_temperature,
+                           fridge_hum=fridge_humidity,
+                           curing_temp=curing_temperature,
+                           curing_hum=curing_humidity)
 
 
 # Add date limits in the URL #Arguments: from=2015-03-04&to=2015-03-05
