@@ -141,10 +141,10 @@ def get_records():
 
     conn = sqlite3.connect('/var/www/lab_app/lab_app.db')
     curs = conn.cursor()
-    curs.execute("SELECT * FROM temperatures WHERE rDateTime BETWEEN ? AND ?",
+    curs.execute("SELECT * FROM temperatures WHERE rDateTime BETWEEN ? AND ? AND sensorID = 'Ambient'",
                  (from_date_utc.format('YYYY-MM-DD HH:mm'), to_date_utc.format('YYYY-MM-DD HH:mm')))
     temperatures = curs.fetchall()
-    curs.execute("SELECT * FROM humidities WHERE rDateTime BETWEEN ? AND ?",
+    curs.execute("SELECT * FROM humidities WHERE rDateTime BETWEEN ? AND ? AND sensorID = 'Ambient'",
                  (from_date_utc.format('YYYY-MM-DD HH:mm'), to_date_utc.format('YYYY-MM-DD HH:mm')))
     humidities = curs.fetchall()
     conn.close()

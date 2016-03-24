@@ -2,12 +2,15 @@ import sqlite3
 # import sys
 import Adafruit_DHT
 import logging
+import datetime
+from pymongo import MongoClient
 
 LOGFILE_NAME = '/var/log/sensor.log'
 
 logging.basicConfig(filename=LOGFILE_NAME, level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s:%(message)s')
 logging.info('Recording started')
+logging.info('Logging into sqlite')
 
 
 def log_values(sensor_id, temp, hum):
@@ -24,22 +27,38 @@ def log_values(sensor_id, temp, hum):
     conn.commit()
     conn.close()
 
-humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 4)
-if humidity is not None and temperature is not None:
-    log_values("Ambient", temperature, humidity)
+amb_humidity, amb_temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 4)
+if amb_humidity is not None and amb_temperature is not None:
+    log_values("Ambient", amb_temperature, amb_humidity)
 else:
     logging.warning('Sensor {0} reading failed.'.format('Ambient'))
 
-humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 24)
-if humidity is not None and temperature is not None:
-    log_values("Fridge", temperature, humidity)
+fridge_humidity, fridge_temperature = Adafruit_DHT.read_retry(
+    Adafruit_DHT.DHT22, 24)
+if fridge_humidity is not None and fridge_temperature is not None:
+    log_values("Fridge", fridge_temperature, fridge_humidity)
 else:
     logging.warning('Sensor {0} reading failed.'.format('Fridge'))
 
-humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 25)
-if humidity is not None and temperature is not None:
-    log_values("Curing", temperature, humidity)
+curing_humidity, curing_temperature = Adafruit_DHT.read_retry(
+    Adafruit_DHT.DHT22, 25)
+if curing_humidity is not None and curing_temperature is not None:
+    log_values("Curing", curing_temperature, curing_humidity)
 else:
     logging.warning('Sensor {0} reading failed.'.format('Curing'))
+
+logging.info('Logging into mongo')
+
+client = MongoClient()
+db = client.charcuterie
+reading = {'date': datetime.datetime.utcnow(), 'sensors': [
+    {'sensor': 'Ambient', 'temp': amb_temperature, 'hum': amb_humidity},
+    {'sensor': 'Fridge', 'temp': fridge_temperature, 'hum': fridge_humidity},
+    {'sensor': 'Curing', 'temp': curing_temperature, 'hum': curing_humidity},
+]}
+readings = db.readings
+
+reading_id = readings.insert_one(reading).inserted_id
+
 
 logging.info('Recording ended')
