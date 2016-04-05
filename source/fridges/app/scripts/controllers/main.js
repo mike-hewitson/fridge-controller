@@ -15,7 +15,6 @@ angular.module('fridgesApp')
             'Karma'
         ];
 
-        this.message = 'asasas';
         $scope.showCurrent = false;
         $scope.message = 'Loading ...';
         currentFactory.getCurrent().query(
