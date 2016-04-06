@@ -4,7 +4,8 @@
     </div>
     <div class="col-xs-12" ng-if="showData">
         <h2>Real time conditions</h2>
-        <p>{{readings}}</p>
+        <!-- <p>{{readings}}</p> -->
+        <p>{{rows}}</p>
         <ul class="tab-pane fade in active">
             <div class="row" ng-repeat="sensor in readings.sensors">
                 <div class="row">
@@ -15,6 +16,7 @@
             </div>
         </ul>
     </div>
-    <google-chart type='pie' options='{"title": "Distribution of days in 2001Q1"}' cols='[{"label":"Month", "type":"string"}, {"label":"Days", "type":"number"}]' rows='[["Jan", 31],["Feb", 28],["Mar", 31]]'>
-    </google-chart>
+    <div  class="row row-content" ng-controller="HistoryChartCtrl">
+        <div google-chart chart="chartObject" style="height:600px; width:100%;"></div>
+    </div>
 </div>
