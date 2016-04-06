@@ -3,7 +3,7 @@
         <h3>{{message}}</h3>
     </div>
     <div class="col-xs-12" ng-if="showCurrent">
-        <h2>Real time conditions @ {{reading.date | date:'yyyy-MM-dd HH:mm:ss' }}</h2>
+        <h2>Real time conditions</h2>
         <ul class="tab-pane fade in active">
             <div class="row" ng-repeat="sensor in reading.sensors">
                 <div class="row">
@@ -13,5 +13,8 @@
                 </div>
             </div>
         </ul>
+    </div>
+    <div class="col-sm-3 col-sm-push-9">
+        <p> @ {{reading.date | date:'yyyy-MM-dd HH:mm:ss' }}</p>
     </div>
 </div>

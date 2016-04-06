@@ -4,18 +4,18 @@
  * @ngdoc function
  * @name fridgesApp.controller:MainCtrl
  * @description
- * # MainCtrl
+ * # HistoryCtrl
  * Controller of the fridgesApp
  */
 angular.module('fridgesApp')
-    .controller('MainCtrl', ['$scope', 'currentFactory', function($scope, currentFactory) {
+    .controller('HistoryCtrl', ['$scope', 'historyFactory', function($scope, historyFactory) {
 
-        $scope.showCurrent = false;
+        $scope.showData = false;
         $scope.message = 'Loading ...';
-        currentFactory.getCurrent().query(
+        historyFactory.getReadings().query(
             function(response) {
-                $scope.reading = response[0];
-                $scope.showCurrent = true;
+                $scope.readings = response;
+                $scope.showData = true;
             },
             function(response) {
                 $scope.message = 'Error: ' + response.status + ' ' + response.statusText;

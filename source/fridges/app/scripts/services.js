@@ -8,4 +8,13 @@ angular.module('fridgesApp')
             return $resource(baseURL + 'current/:id', null, { 'update': { method: 'PUT' } });
         };
 
-    }]);
+    }])
+    .service('historyFactory', ['$resource', 'baseURL', function($resource, baseURL) {
+
+        this.getReadings = function() {
+            return $resource(baseURL + 'readings/:id', null, { 'update': { method: 'PUT' } });
+        };
+
+    }])
+
+    ;
