@@ -9,6 +9,11 @@ var readingRouter = express.Router();
 readingRouter.use(bodyParser.json());
 
 readingRouter.route('/')
+    .all(function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With");
+        next();
+    })
     .get(function(req, res, next) {
         Readings.find({}, function(err, reading) {
             if (err) throw err;
@@ -35,6 +40,11 @@ readingRouter.route('/')
     });
 
 readingRouter.route('/latest')
+    .all(function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With");
+        next();
+    })
     .get(function(req, res, next) {
         var query = Readings.find().limit(1).sort({ $natural: -1 });
         query.exec(function(err, reading) {
@@ -43,7 +53,36 @@ readingRouter.route('/latest')
         });
     });
 
+readingRouter.route('/today')
+    .all(function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With");
+        next();
+    })
+    .get(function(req, res, next) {
+        var dateTo;
+        var dateFrom = new Date();
+        dateTo = new Date(Date.now());
+        dateFrom.setDate(dateTo.getDate() - 7);
+        var query = Readings.find({
+                date: {
+                    $gte: dateFrom,
+                    $lt: dateTo
+                }
+            })
+            .sort({ $natural: 1 });
+        query.exec(function(err, reading) {
+            if (err) throw err;
+            res.json(reading);
+        });
+    });
+
 readingRouter.route('/:readingId')
+    .all(function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With");
+        next();
+    })
     .get(function(req, res, next) {
         Readings.findById(req.params.readingId, function(err, reading) {
             if (err) throw err;
@@ -68,6 +107,11 @@ readingRouter.route('/:readingId')
     });
 
 readingRouter.route('/:readingId/sensors')
+    .all(function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With");
+        next();
+    })
     .get(function(req, res, next) {
         Readings.findById(req.params.readingId, function(err, reading) {
             if (err) throw err;

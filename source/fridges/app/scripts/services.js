@@ -5,7 +5,7 @@ angular.module('fridgesApp')
     .service('currentFactory', ['$resource', 'baseURL', function($resource, baseURL) {
 
         this.getCurrent = function() {
-            return $resource(baseURL + 'current/:id', null, { 'update': { method: 'PUT' } });
+            return $resource(baseURL + 'readings/latest/');
         };
 
     }])
@@ -15,6 +15,9 @@ angular.module('fridgesApp')
             return $resource(baseURL + 'readings/:id', null, { 'update': { method: 'PUT' } });
         };
 
+        this.getToday = function() {
+            return $resource(baseURL + 'readings/today/');
+        };
     }])
 
     ;

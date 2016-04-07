@@ -9,12 +9,33 @@ function getSensorByName(name, sensors) {
 }
 
 function buildRows(sensor, readings) {
-    var rows = [];
 
-    for (var reading of readings) {
-        var data = getSensorByName(sensor, reading.sensors)[0];
-        rows.push({ c: [{ v: new Date(reading.date) }, { v: data.temp }, { v: data.hum }] });
+    // var simpleMovingAverage = require('simplemovingaverage');
+    var smaTemps = new SimpleMovingAverage();
+    var smaHums = new SimpleMovingAverage();
+    var intWindowSize = 5;
+
+    var rows = [];
+    var temps = [];
+    var hums = [];
+    var newTemps = [];
+    var newHums = [];
+
+    for (var i = 0; i < readings.length; i++) {
+        var data = getSensorByName(sensor, readings[i].sensors)[0];
+        temps.push(data.temp);
+        hums.push(data.hum);
     }
+
+    newTemps = smaTemps.get(temps, intWindowSize);
+    newHums = smaHums.get(hums, intWindowSize);
+
+    var j;
+    for (i = 0; i < newTemps.length; i++) {
+        j = i * intWindowSize;
+        rows.push({ c: [{ v: new Date(readings[j].date) }, { v: newTemps[i] }, { v: newHums[i] }] });
+    }
+
     return rows;
 }
 
@@ -35,6 +56,8 @@ function buildChart(sensor, readings) {
 
     chartObject.options = {
         'title': title,
+        curveType: 'function',
+        smoothLine: true,
         series: {
             0: { targetAxisIndex: 0, type: 'line' },
             1: { targetAxisIndex: 1, type: 'line' }
@@ -74,7 +97,7 @@ angular.module('fridgesApp')
 
         $scope.showData = false;
         $scope.message = 'Loading ...';
-        historyFactory.getReadings().query(
+        historyFactory.getToday().query(
             function(response) {
                 $scope.readings = response;
                 $scope.showData = true;

@@ -39,6 +39,7 @@
     "node": ">=0.10.0"
   },
   "dependencies": {
-    "angular-google-chart": "^0.1.0"
+    "angular-google-chart": "^0.1.0",
+    "simplemovingaverage": "^1.0.3"
   }
 }
