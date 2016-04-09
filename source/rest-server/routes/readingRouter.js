@@ -63,7 +63,7 @@ readingRouter.route('/today')
         var dateTo;
         var dateFrom = new Date();
         dateTo = new Date(Date.now());
-        dateFrom.setDate(dateTo.getDate() - 7);
+        dateFrom.setDate(dateTo.getDate() - 5);
         var query = Readings.find({
                 date: {
                     $gte: dateFrom,
